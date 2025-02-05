@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title">{{ quiz.title }}</h1>
+                <p class="card-text text-muted">{{ quiz.description }}</p>
+                <hr>
+                <h5>Questions:</h5>
+                <ul class="list-group list-group-flush">
+                    {% for question in quiz.questions.all %}
+                        <li class="list-group-item">{{ question.text }}</li>
+                    {% empty %}
+                        <li class="list-group-item text-muted">No questions available.</li>
+                    {% endfor %}
+                </ul>
+                <div class="mt-4">
+{#                    <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Take Quiz</a>#}
+                    <a class="btn btn-primary">Take Quiz</a>
+                    <a href="{% url 'quizzes' %}" class="btn btn-secondary">Back to Quizzes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
