@@ -16,8 +16,7 @@
                     {% endfor %}
                 </ul>
                 <div class="mt-4">
-{#                    <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-primary">Take Quiz</a>#}
-                    <a class="btn btn-primary">Take Quiz</a>
+                    <a href="{% url 'take-quiz' quiz.id %}" class="btn btn-primary">Take Quiz</a>
                     <a href="{% url 'quizzes' %}" class="btn btn-secondary">Back to Quizzes</a>
                 </div>
             </div>
