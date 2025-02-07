@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="card-title">Quiz Results: {{ response.quiz.title }}</h1>
+                <p class="fw-bold">Your Score: {{ response.score }} / {{ response.total_questions }}</p>
+                <hr>
+
+                <h5>Review Your Answers:</h5>
+                <ul class="list-group">
+                    {% for response_item in response.response_details.all %}
+                        <li class="list-group-item">
+                            <p class="fw-bold">{{ response_item.question.text }}</p>
+                            <p class="text-muted">Your Answer:
+                                <span class="{{ response_item.is_correct|yesno:'text-success,text-danger' }}">
+                                    {{ response_item.entered_answer }}
+                                </span>
+                            </p>
+                            <p class="text-muted">Correct Answer:
+                                <span class="text-success">
+                                    {{ response_item.correct_answer }}
+                                </span>
+                            </p>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <div class="mt-4">
+                    <a href="{% url 'quizzes' %}" class="btn btn-secondary">Back to Quizzes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

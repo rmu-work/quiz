@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 from .models import User
+from .models import UserResponse
+from .models import QuestionAnswers
 
 
 class CustomUserAdmin(UserAdmin):
@@ -41,4 +43,6 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(UserResponse)
+admin.site.register(QuestionAnswers)
 

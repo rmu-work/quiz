@@ -17,7 +17,9 @@ class UserResponse(models.Model):
     quiz = models.ForeignKey('quizzes.Quiz', on_delete=models.CASCADE, verbose_name='Quiz', related_name='attended_quiz')
     score = models.PositiveIntegerField(verbose_name='Score', blank=True, null=True)
     started_at = models.DateTimeField(verbose_name='Started At')
-    ended_at = models.DateTimeField(verbose_name='Ended At')
+    ended_at = models.DateTimeField(verbose_name='Ended At', blank=True, null=True)
+    total_questions = models.PositiveIntegerField(verbose_name='Total Questions', blank=True, null=True)
+    is_completed = models.BooleanField(default=False, verbose_name='Completed')
 
     def __str__(self):
         return f"{self.user} - {self.quiz}"
@@ -25,14 +27,17 @@ class UserResponse(models.Model):
 
 class QuestionAnswers(models.Model):
     user_response = models.ForeignKey(
-        UserResponse, on_delete=models.CASCADE, verbose_name='User Response', related_name='details'
+        UserResponse, on_delete=models.CASCADE, verbose_name='User Response', related_name='response_details'
     )
     question = models.ForeignKey(
-        'quizzes.Question', on_delete=models.CASCADE, verbose_name='Question', related_name='details'
+        'quizzes.Question', on_delete=models.CASCADE, verbose_name='Question', related_name='answered_question'
     )
     entered_answer = models.TextField(verbose_name='Entered Answer')
-    correct_answer = models.TextField(verbose_name='Correct Answer')
-    is_correct = models.BooleanField(verbose_name='Is Correct')
+    correct_answer = models.ForeignKey(
+        'quizzes.Answer', on_delete=models.CASCADE, verbose_name='Correct Answer', related_name='correct_answer'
+    )
+    is_answered = models.BooleanField(default=False, verbose_name='Is Correct')
+    is_correct = models.BooleanField(default=False, verbose_name='Is Correct')
 
     def __str__(self):
         return f"{self.user_response} - {self.question}"
