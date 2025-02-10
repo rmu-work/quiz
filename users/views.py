@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import render
 import datetime
+from django.utils import timezone
 
 from .forms import RegisterForm
 from .forms import LoginForm
@@ -47,14 +48,17 @@ class TakeQuizView(LoginRequiredMixin, View):
 
     def get(self, request, quiz_id):
         quiz = get_object_or_404(Quiz, id=quiz_id)
-        quiz_started = UserResponse.objects.create(
+
+        quiz_started, created = UserResponse.objects.get_or_create(
             user=request.user,
             quiz=quiz,
             score=0,
             total_questions=quiz.questions.all().count(),
-            is_completed=False,
-            started_at=datetime.datetime.now()
+            is_completed=False
         )
+        if created:
+            quiz_started.started_at = timezone.now()
+            quiz_started.save()
         return render(request, self.template_name, {'quiz': quiz, 'response': quiz_started})
 
     def post(self, request, quiz_id):

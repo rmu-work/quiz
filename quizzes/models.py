@@ -9,6 +9,7 @@ class Quiz(models.Model):
     time_limit = models.IntegerField(help_text="Time limit in minutes", null=True, blank=True, verbose_name='Time Limit')
     created_by = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name='Created By')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
+    is_published = models.BooleanField(default=False, verbose_name='Published')
 
     def __str__(self):
         return self.title

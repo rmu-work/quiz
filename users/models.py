@@ -16,7 +16,7 @@ class UserResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='User', related_name='response')
     quiz = models.ForeignKey('quizzes.Quiz', on_delete=models.CASCADE, verbose_name='Quiz', related_name='attended_quiz')
     score = models.PositiveIntegerField(verbose_name='Score', blank=True, null=True)
-    started_at = models.DateTimeField(verbose_name='Started At')
+    started_at = models.DateTimeField(verbose_name='Started At', blank=True, null=True)
     ended_at = models.DateTimeField(verbose_name='Ended At', blank=True, null=True)
     total_questions = models.PositiveIntegerField(verbose_name='Total Questions', blank=True, null=True)
     is_completed = models.BooleanField(default=False, verbose_name='Completed')

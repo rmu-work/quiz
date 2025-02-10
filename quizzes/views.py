@@ -6,6 +6,7 @@ from .models import Quiz
 
 class QuizListView(ListView):
     model = Quiz
+    queryset = Quiz.objects.filter(is_published=True)  # Fetch all quizzes instead of all objects in the database
     context_object_name = 'quizzes'
     template_name = 'quiz_list.html'
     paginate_by = 10

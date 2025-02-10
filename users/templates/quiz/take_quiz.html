@@ -7,7 +7,8 @@
                 <h1 class="card-title">{{ quiz.title }}</h1>
                 <p class="card-text text-muted">{{ quiz.description }}</p>
                 <hr>
-                <form method="post">
+                <div class="alert alert-warning text-center" id="timer">Time Left: {{ quiz.time_limit }}:00</div>
+                <form method="post" id="quiz-form">
                     {% csrf_token %}
                     {% for question in quiz.questions.all %}
                         <div class="mb-3">
@@ -45,3 +46,93 @@
         </div>
     </div>
 {% endblock %}
+
+{% block extra_js %}
+
+    <script>
+        // Get required elements
+        const timerElement = document.getElementById('timer');
+        const quizForm = document.getElementById('quiz-form');
+        const responseId = document.getElementById('responseId').value;
+
+        // Initialize timer
+        let timeLeft = {{ quiz.time_limit }} * 60; // Default to 10 minutes if time_limit is missing
+
+        // Check sessionStorage for saved time
+        const savedTime = sessionStorage.getItem(`quiz_time_${responseId}`);
+        if (savedTime) {
+            const timePassed = Math.floor((Date.now() - savedTime) / 1000);
+            timeLeft = Math.max(timeLeft - timePassed, 0);
+        } else {
+            sessionStorage.setItem(`quiz_time_${responseId}`, Date.now().toString());
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `Time Left: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Your quiz will be submitted automatically.');
+                submitQuiz();
+            }
+        }
+
+        function validateForm() {
+            const radioGroups = new Set();
+            let answered = false;
+
+            // Check radio buttons
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                if (input.checked) {
+                    radioGroups.add(input.name);
+                    answered = true;
+                }
+            });
+
+            // Check text inputs
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                if (input.value.trim() !== '') {
+                    answered = true;
+                }
+            });
+
+            return answered;
+        }
+
+        function submitQuiz() {
+            if (validateForm()) {
+                sessionStorage.removeItem(`quiz_time_${responseId}`);
+                quizForm.submit();
+            } else {
+                alert('Please answer at least one question before submitting.');
+            }
+        }
+
+        // Start timer
+        const timerInterval = setInterval(updateTimer, 1000);
+
+        // Handle form submission
+        quizForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            submitQuiz();
+        });
+
+        // Prevent going back
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function () {
+            alert('You cannot go back during the quiz.');
+            window.history.pushState(null, null, window.location.href);
+        };
+
+        // Save timer state before page unload
+        window.addEventListener('beforeunload', function () {
+            if (timeLeft > 0) {
+                sessionStorage.setItem(`quiz_time_${responseId}`, Date.now().toString());
+            }
+        });
+    </script>
+
+{% endblock extra_js %}
